@@ -1,0 +1,48 @@
+version: "3.9"
+services:
+    base:
+        entrypoint: ["/bin/bash", "-c", "trap : TERM INT; sleep infinity & wait"]
+        image:  pytorch/pytorch:latest
+        hostname: test
+        build:
+          context: .
+          dockerfile: Dockerfile
+        environment:
+            - USE_HTTPS=0
+            - INSTALL_ROOT=${INSTALL_ROOT}
+        ports:
+            - "5555:5555"
+        volumes:
+            - type: bind
+              source: code
+              target: ${INSTALL_ROOT}/code
+            - type: bind
+              source: scripts
+              target: ${INSTALL_ROOT}/scripts
+            - type: bind
+              source: src
+              target: ${INSTALL_ROOT}/src
+            - type: bind
+              source: tests
+              target: ${INSTALL_ROOT}/tests
+
+        # deploy:
+        #   resources:
+        #     reservations:
+        #       devices:
+                # - driver: nvidia
+                #   count: 1
+                #   capabilities: [gpu]
+
+        # devices:
+        #     - /dev/kfd
+        #     - /dev/dri
+        # group_add:
+        #     - video
+        # ipc: host
+        # cap_add:
+        #     - SYS_PTRACE
+        # security_opt:
+        #     - seccomp=unconfined
+
+
